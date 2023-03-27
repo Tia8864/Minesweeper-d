@@ -47,7 +47,10 @@ public class UIController : MonoBehaviour
     private void Update()
     {
         if(txtVol != null)
+        {
+            LoadData.Vol = SliderVol.value;
             txtVol.SetText(Mathf.RoundToInt(SliderVol.value) + "");
+        }
         if (txtRow != null)
         {
             _OnValidate();
@@ -109,6 +112,8 @@ public class UIController : MonoBehaviour
         LoadData.Col = 9;
         LoadData.Mine = 10; 
         LoadData.Vol = Mathf.RoundToInt(SliderVol.value);
+        LoadData.IsTimeDown = true;
+        LoadData.Time = 40;
         _loadSreen(1);
     }
 
@@ -118,6 +123,8 @@ public class UIController : MonoBehaviour
         LoadData.Col = 16;
         LoadData.Mine = 40;
         LoadData.Vol = Mathf.RoundToInt(SliderVol.value);
+        LoadData.IsTimeDown = true;
+        LoadData.Time = 70;
         _loadSreen(1);
     }
 
@@ -127,15 +134,18 @@ public class UIController : MonoBehaviour
         LoadData.Col = 30;
         LoadData.Mine = 200;
         LoadData.Vol = Mathf.RoundToInt(SliderVol.value);
+        LoadData.IsTimeDown = true;
+        LoadData.Time = 100;
         _loadSreen(1);
     }
 
     public void _btnCustom()
     {
         LoadData.Row = Mathf.RoundToInt(SliderRow.value);
-        LoadData.Col = Mathf.RoundToInt(SliderRow.value);
-        LoadData.Mine = Mathf.RoundToInt(SliderRow.value);
+        LoadData.Col = Mathf.RoundToInt(SliderCol.value);
+        LoadData.Mine = Mathf.RoundToInt(SliderMine.value);
         LoadData.Vol = Mathf.RoundToInt(SliderVol.value);
+        LoadData.IsTimeDown = false;       
         _loadSreen(1);
     }
 }   

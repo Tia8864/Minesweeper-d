@@ -1,11 +1,16 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class Game : MonoBehaviour
 {
     public int width = 16;
     public int height = 16;
     public int mineCount = 32;
+    private int flag = 0;
+    private float timeDown;
 
     [SerializeField] private Board board;
     [SerializeField] private Transform Map;
@@ -13,7 +18,11 @@ public class Game : MonoBehaviour
 
     [SerializeField] private UnitsData LoadData;
 
-
+    [Header("InGame")]
+    [SerializeField] private TextMeshProUGUI txtFlag;
+    [SerializeField] private Slider sliderTime;
+    [SerializeField] private GameObject sliderTimeUI;
+    [SerializeField] private GameObject popUpPasue;
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -23,6 +32,15 @@ public class Game : MonoBehaviour
     private void Start()
     {
         NewGame();
+        if (LoadData.IsTimeDown)
+        {
+            sliderTimeUI.SetActive(true);
+            StartCoroutine(Timer());
+        }
+        else
+        {
+            sliderTimeUI.SetActive(false);
+        }
     }
 
     private void NewGame()
@@ -37,7 +55,7 @@ public class Game : MonoBehaviour
         GenerateMines();
         GenerateNumbers();
 
-        Camera.main.transform.position = new Vector3(width / 2f, 3f * Mathf.Sqrt(width * height) + 2f,height / 2f);
+        Camera.main.transform.position = new Vector3(width / 2f, 3f * Mathf.Sqrt(width * height) + 2f,height / 2f + 1f);
         Map.position = new Vector3(width / 2f, -1.5f, height / 2f);
         Map.localScale = Vector3.one * Mathf.Max(height, width) /1.7f;
         board.Draw(state);
@@ -144,8 +162,28 @@ public class Game : MonoBehaviour
             }
         }else if (LoadData.EndGame)
         {
-            Invoke("LoadEndGameUI", 3f);
+            Invoke("LoadEndGameUI", 1.5f);
         }
+
+        txtFlag.SetText(flag + "/" + mineCount);
+
+    }
+
+    public IEnumerator Timer()
+    {
+        timeDown = LoadData.Time;
+        sliderTime.maxValue = timeDown;
+        do
+        {
+            sliderTime.value = timeDown;
+            yield return new WaitForSeconds(1);
+            if (timeDown < 0)
+            {
+                LoadData.EndGame = true;
+                LoadData.WinGame = false;
+                break;
+            }
+        } while (timeDown-- >= 0 && !LoadData.EndGame);
     }
 
     public static Vector3 GetMouseWorldPosition()
@@ -174,6 +212,8 @@ public class Game : MonoBehaviour
         }
 
         cell.flagged = !cell.flagged;
+        if (cell.flagged == true) flag++;
+        else flag--;
         state[cellPosition.x, cellPosition.y] = cell;
         board.Draw(state);
     }
@@ -310,4 +350,20 @@ public class Game : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    public void _btnPause()
+    {
+        popUpPasue.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void _btnQuit()
+    {
+        SceneManager.LoadSceneAsync(0);
+    }
+
+    public void _btnResume()
+    {
+        popUpPasue.SetActive(false);
+        Time.timeScale = 1;
+    }
 }
