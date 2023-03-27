@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -9,20 +10,14 @@ public class Game : MonoBehaviour
     [SerializeField] private Board board;
     [SerializeField] private Transform Map;
     private Cell[,] state;
-    private bool gameover;
 
-    private void OnValidate()
-    {
-        width = Mathf.Clamp(width, height - 5, height + 5);
-        height = Mathf.Clamp(height, 10, 50);
-        mineCount = Mathf.Clamp(mineCount, 0, width * height);
-    }
+    [SerializeField] private UnitsData LoadData;
+
 
     private void Awake()
     {
         Application.targetFrameRate = 60;
-
-        //board = GetComponentInChildren<Board>();
+        LoadData.EndGame = false;
     }
 
     private void Start()
@@ -32,9 +27,12 @@ public class Game : MonoBehaviour
 
     private void NewGame()
     {
-        state = new Cell[width, height];
-        gameover = false;
+        LoadData.EndGame = false;
+        width = LoadData.Row;
+        height = LoadData.Col;
+        mineCount = LoadData.Mine;
 
+        state = new Cell[width, height];
         GenerateCells();
         GenerateMines();
         GenerateNumbers();
@@ -137,13 +135,16 @@ public class Game : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R)) {
             NewGame();
         }
-        else if (!gameover)
+        else if (!LoadData.EndGame)
         {
             if (Input.GetMouseButtonDown(1)) {
                 Flag();
             } else if (Input.GetMouseButtonDown(0)) {
                 Reveal();
             }
+        }else if (LoadData.EndGame)
+        {
+            Invoke("LoadEndGameUI", 3f);
         }
     }
 
@@ -183,8 +184,8 @@ public class Game : MonoBehaviour
         Vector3Int cellPosition = board.tilemap.WorldToCell(worldPosition);
         Cell cell = GetCell(cellPosition.x, cellPosition.y);
 
-        // Cannot reveal if already revealed or while flagged
-        if (cell.type == Cell.Type.Invalid || cell.revealed || cell.flagged) {
+        // Cannot reveal if already revealed or while flagged of endgame
+        if (cell.type == Cell.Type.Invalid || cell.revealed || cell.flagged || LoadData.EndGame) {
             return;
         }
 
@@ -229,10 +230,16 @@ public class Game : MonoBehaviour
         }
     }
 
+    public void LoadEndGameUI()
+    {
+        SceneManager.LoadSceneAsync(2);
+    }
+
     private void Explode(Cell cell)
     {
         Debug.Log("Game Over!");
-        gameover = true;
+        LoadData.WinGame = false;
+        LoadData.EndGame = true;
 
         // Set the mine as exploded
         cell.exploded = true;
@@ -263,17 +270,17 @@ public class Game : MonoBehaviour
             {
                 Cell cell = state[x, y];
 
-                // All non-mine cells must be revealed to have won
                 if (cell.type != Cell.Type.Mine && !cell.revealed) {
-                    return; // no win
+
+                    return;
                 }
             }
         }
 
         Debug.Log("Winner!");
-        gameover = true;
+        LoadData.EndGame = true;
+        LoadData.WinGame = true;
 
-        // Flag all the mines
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)

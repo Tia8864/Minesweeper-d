@@ -13,9 +13,16 @@ public class UnitsData : ScriptableObject
     private int _mine;
     [SerializeField]
     private float _vol;
+    [SerializeField]
+    private bool _endGame;
+    [SerializeField]
+    private bool _winGame;
+
 
     public int Row { get { return _row; } set { _row = value; } }
     public int Col { get { return _col; } set { _col = value; } }
     public int Mine { get { return _mine; } set { _mine = value; } }
     public float Vol { get { return _vol; } set { _vol = value; } }
+    public bool EndGame { get { return _endGame; } set { _endGame = value; } }
+    public bool WinGame { get { return _winGame; } set { _winGame = value; } }
 }

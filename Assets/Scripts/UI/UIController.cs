@@ -21,8 +21,28 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI txtMine;
     public Slider SliderMine;
 
+    [Header("UI")]
+    public GameObject MenuUI;
+    public GameObject PlayUI;
+    public GameObject CustomUI;
+    public GameObject LoadSceneUI;
+    public GameObject OpitionUI;
 
+    [Header("InputData")]
     [SerializeField] private UnitsData LoadData;
+    private void Awake()
+    {
+        if(MenuUI != null) 
+            MenuUI.SetActive(true);
+        if(PlayUI != null) 
+            PlayUI.SetActive(false);
+        if(CustomUI != null) 
+            CustomUI.SetActive(false);
+        if(LoadSceneUI != null) 
+            LoadSceneUI.SetActive(false);
+        if(OpitionUI != null) 
+            OpitionUI.SetActive(false);
+    }
 
     private void Update()
     {
@@ -30,9 +50,31 @@ public class UIController : MonoBehaviour
             txtVol.SetText(Mathf.RoundToInt(SliderVol.value) + "");
         if (txtRow != null)
         {
+            _OnValidate();
             txtRow.SetText(Mathf.RoundToInt(SliderRow.value) + "");
             txtCol.SetText(Mathf.RoundToInt(SliderCol.value) + "");
             txtMine.SetText(Mathf.RoundToInt(SliderMine.value) + "");
+        }
+    }
+
+    public void _OnValidate()
+    {
+        if (Mathf.Abs(SliderCol.value - SliderRow.value) > 5)
+        {
+            if (SliderCol.value > SliderRow.value)
+            {
+                SliderCol.value -= 1;
+            }
+
+
+            if (SliderRow.value > SliderCol.value)
+            {
+                SliderRow.value -= 1;
+            }
+        }
+        if(SliderMine.value < SliderRow.value* SliderCol.value)
+        {
+            SliderMine.maxValue = SliderRow.value * SliderCol.value;
         }
     }
 
@@ -72,7 +114,6 @@ public class UIController : MonoBehaviour
 
     public void _btnMedium()
     {
-
         LoadData.Row = 16;
         LoadData.Col = 16;
         LoadData.Mine = 40;
@@ -97,7 +138,4 @@ public class UIController : MonoBehaviour
         LoadData.Vol = Mathf.RoundToInt(SliderVol.value);
         _loadSreen(1);
     }
-
-
-    
 }   
