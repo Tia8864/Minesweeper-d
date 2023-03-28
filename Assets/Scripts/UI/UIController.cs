@@ -42,6 +42,7 @@ public class UIController : MonoBehaviour
             LoadSceneUI.SetActive(false);
         if(OpitionUI != null) 
             OpitionUI.SetActive(false);
+        LoadData.IsMute = false;
     }
 
     private void Update()

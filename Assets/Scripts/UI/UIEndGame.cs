@@ -17,6 +17,7 @@ public class UIEndGame : MonoBehaviour
         {
             txtEndGame.SetText("Game Over");
         }
+        unitsData.IsMute = false;
     }
 
 

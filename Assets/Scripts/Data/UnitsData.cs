@@ -13,6 +13,7 @@ public class UnitsData : ScriptableObject
     [SerializeField]private bool _winGame;
     [SerializeField]private float _time;
     [SerializeField]private bool _isTimeDown;
+    [SerializeField] private bool _isMute;
 
     public int Row { get { return _row; } set { _row = value; } }
     public int Col { get { return _col; } set { _col = value; } }
@@ -22,4 +23,9 @@ public class UnitsData : ScriptableObject
     public bool WinGame { get { return _winGame; } set { _winGame = value; } }
     public bool IsTimeDown { get { return _isTimeDown; } set { _isTimeDown = value; } }
     public float Time { get { return _time; } set { _time = value; } }
+    public bool IsMute
+    {
+        get { return _isMute; }
+        set { _isMute = value; }
+    }
 }

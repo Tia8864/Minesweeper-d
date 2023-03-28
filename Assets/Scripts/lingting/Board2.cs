@@ -1,24 +1,24 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(Tilemap))]
-public class Board : MonoBehaviour
+//[RequireComponent(typeof(Tilemap))]
+public class Board2 : MonoBehaviour
 {
     public Tilemap tilemap { get; private set; }
 
-    public Tile tileUnknown;
-    public Tile tileEmpty;
-    public Tile tileMine;
-    public Tile tileExploded;
-    public Tile tileFlag;
-    public Tile tileNum1;
-    public Tile tileNum2;
-    public Tile tileNum3;
-    public Tile tileNum4;
-    public Tile tileNum5;
-    public Tile tileNum6;
-    public Tile tileNum7;
-    public Tile tileNum8;
+    public GameObject tileUnknown;
+    public GameObject tileEmpty;
+    public GameObject tileMine;
+    public GameObject tileExploded;
+    public GameObject tileFlag;
+    public GameObject tileNum1;
+    public GameObject tileNum2;
+    public GameObject tileNum3;
+    public GameObject tileNum4;
+    public GameObject tileNum5;
+    public GameObject tileNum6;
+    public GameObject tileNum7;
+    public GameObject tileNum8;
 
     private void Awake()
     {
@@ -35,23 +35,29 @@ public class Board : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Cell cell = state[x, y];
-                tilemap.SetTile(cell.position, GetTile(cell));
+                //tilemap.SetTile(cell.position, GetTile(cell));
+                //tilemap.BoxFill(cell.position, GetTile(cell), )
             }
         }
     }
 
-    private Tile GetTile(Cell cell)
+    private GameObject GetTile(Cell cell)
     {
-        if (cell.revealed) {
+        if (cell.revealed)
+        {
             return GetRevealedTile(cell);
-        } else if (cell.flagged) {
+        }
+        else if (cell.flagged)
+        {
             return tileFlag;
-        } else {
+        }
+        else
+        {
             return tileUnknown;
         }
     }
 
-    private Tile GetRevealedTile(Cell cell)
+    private GameObject GetRevealedTile(Cell cell)
     {
         switch (cell.type)
         {
@@ -62,7 +68,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    private Tile GetNumberTile(Cell cell)
+    private GameObject GetNumberTile(Cell cell)
     {
         switch (cell.number)
         {

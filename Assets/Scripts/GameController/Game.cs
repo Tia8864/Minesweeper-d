@@ -23,6 +23,8 @@ public class Game : MonoBehaviour
     [SerializeField] private Slider sliderTime;
     [SerializeField] private GameObject sliderTimeUI;
     [SerializeField] private GameObject popUpPasue;
+    [SerializeField] private Image imgBtnMute;
+    [SerializeField] private Sprite imgOnMusic, imgOffMusic;
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -55,7 +57,7 @@ public class Game : MonoBehaviour
         GenerateMines();
         GenerateNumbers();
 
-        Camera.main.transform.position = new Vector3(width / 2f, 3f * Mathf.Sqrt(width * height) + 2f,height / 2f + 1f);
+        Camera.main.transform.position = new Vector3(width / 2f, 4f * Mathf.Sqrt(width * height) + 10f,/*height / 2f + */0f);
         Map.position = new Vector3(width / 2f, -1.5f, height / 2f);
         Map.localScale = Vector3.one * Mathf.Max(height, width) /1.7f;
         board.Draw(state);
@@ -365,5 +367,18 @@ public class Game : MonoBehaviour
     {
         popUpPasue.SetActive(false);
         Time.timeScale = 1;
+    }
+
+    public void _btnMute()
+    {
+        LoadData.IsMute = !LoadData.IsMute;
+        if (!LoadData.IsMute)
+        {
+            imgBtnMute.sprite = imgOnMusic;
+        }
+        else
+        {
+            imgBtnMute.sprite = imgOffMusic;
+        }
     }
 }
