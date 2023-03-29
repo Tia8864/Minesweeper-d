@@ -43,6 +43,10 @@ public class UIController : MonoBehaviour
         if(OpitionUI != null) 
             OpitionUI.SetActive(false);
         LoadData.IsMute = false;
+        SliderCol.value = 9;
+        SliderRow.value = 9;
+        SliderMine.value = 10;
+        SliderVol.value = LoadData.Vol;
     }
 
     private void Update()
@@ -75,11 +79,22 @@ public class UIController : MonoBehaviour
             {
                 SliderRow.value -= 1;
             }
+
+            if (SliderCol.value < SliderRow.value)
+            {
+                SliderCol.value += 1;
+            }
+
+            if (SliderRow.value < SliderCol.value)
+            {
+                SliderRow.value += 1;
+            }
         }
         if(SliderMine.value < SliderRow.value* SliderCol.value)
         {
             SliderMine.maxValue = SliderRow.value * SliderCol.value;
         }
+
     }
 
     public void _btnQuit()

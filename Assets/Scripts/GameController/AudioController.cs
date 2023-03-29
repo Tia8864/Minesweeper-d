@@ -13,11 +13,6 @@ public class AudioController : MonoBehaviour
     private void Update()
     {
         audioSource.volume = unitsData.Vol / 100f;
-        /*if (!unitsData.IsMute)
-            audioSource.Play();
-        else
-            audioSource.Stop();*/
-
-        //if (unitsData.EndGame && !unitsData.IsMute) audioSource.Stop();
     }
+    
 }

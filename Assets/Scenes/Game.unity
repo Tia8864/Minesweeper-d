@@ -1110,6 +1110,7 @@ MonoBehaviour:
   imgBtnMute: {fileID: 920475113}
   imgOnMusic: {fileID: 21300000, guid: 2d83b678604c7894c8c08a7e57108353, type: 3}
   imgOffMusic: {fileID: 21300000, guid: 7dff719718ae8cd4aac0233c9a37867a, type: 3}
+  audioSource: {fileID: 754829181}
 --- !u!1 &528080575
 GameObject:
   m_ObjectHideFlags: 0

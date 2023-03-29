@@ -25,6 +25,9 @@ public class Game : MonoBehaviour
     [SerializeField] private GameObject popUpPasue;
     [SerializeField] private Image imgBtnMute;
     [SerializeField] private Sprite imgOnMusic, imgOffMusic;
+    [SerializeField] private AudioSource audioSource;
+
+    #region methor of Unity
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -43,8 +46,30 @@ public class Game : MonoBehaviour
         {
             sliderTimeUI.SetActive(false);
         }
+    }    
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R)) {
+            NewGame();
+        }
+        else if (!LoadData.EndGame)
+        {
+            if (Input.GetMouseButtonDown(1)) {
+                Flag();
+            } else if (Input.GetMouseButtonDown(0)) {
+                Reveal();
+            }
+        }/*else if (LoadData.EndGame)
+        {
+            Invoke("LoadEndGameUI", 1.5f);
+        }*/
+
+        txtFlag.SetText(flag + "/" + mineCount);
+
     }
 
+    #endregion
+    #region RenderBoard
     private void NewGame()
     {
         LoadData.EndGame = false;
@@ -62,7 +87,6 @@ public class Game : MonoBehaviour
         Map.localScale = Vector3.one * Mathf.Max(height, width) /1.7f;
         board.Draw(state);
     }
-
     private void GenerateCells()
     {
         for (int x = 0; x < width; x++)
@@ -149,27 +173,22 @@ public class Game : MonoBehaviour
 
         return count;
     }
-
-    private void Update()
+    #endregion
+    #region Units
+    public static Vector3 GetMouseWorldPosition()
     {
-        if (Input.GetKeyDown(KeyCode.R)) {
-            NewGame();
-        }
-        else if (!LoadData.EndGame)
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if(Physics.Raycast(ray,out hit))
         {
-            if (Input.GetMouseButtonDown(1)) {
-                Flag();
-            } else if (Input.GetMouseButtonDown(0)) {
-                Reveal();
-            }
-        }else if (LoadData.EndGame)
-        {
-            Invoke("LoadEndGameUI", 1.5f);
+            return hit.point;
         }
-
-        txtFlag.SetText(flag + "/" + mineCount);
-
+        else
+        {
+            return Vector3.zero;
+        }
     }
+    #endregion
 
     public IEnumerator Timer()
     {
@@ -187,21 +206,11 @@ public class Game : MonoBehaviour
             }
         } while (timeDown-- >= 0 && !LoadData.EndGame);
     }
-
-    public static Vector3 GetMouseWorldPosition()
+    public void LoadEndGameUI()
     {
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(Physics.Raycast(ray,out hit))
-        {
-            return hit.point;
-        }
-        else
-        {
-            return Vector3.zero;
-        }
+        SceneManager.LoadSceneAsync(2);
     }
-
+    #region Solve of Game
     private void Flag()
     {
         Vector3 worldPosition = GetMouseWorldPosition();
@@ -235,6 +244,7 @@ public class Game : MonoBehaviour
         {
             case Cell.Type.Mine:
                 Explode(cell);
+                //Invoke("LoadEndGameUI", 1.5f);
                 break;
 
             case Cell.Type.Empty:
@@ -271,17 +281,27 @@ public class Game : MonoBehaviour
             Flood(GetCell(cell.position.x, cell.position.y + 1));
         }
     }
-
-    public void LoadEndGameUI()
+    private Cell GetCell(int x, int y)
     {
-        SceneManager.LoadSceneAsync(2);
+        if (IsValid(x, y)) {
+            return state[x, y];
+        } else {
+            return new Cell();
+        }
     }
 
+    private bool IsValid(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+    #endregion
+    #region Check Win or Lose
     private void Explode(Cell cell)
     {
         Debug.Log("Game Over!");
         LoadData.WinGame = false;
-        LoadData.EndGame = true;
+        LoadData.EndGame = true; 
+        Invoke("LoadEndGameUI", 1.5f);
 
         // Set the mine as exploded
         cell.exploded = true;
@@ -321,7 +341,8 @@ public class Game : MonoBehaviour
 
         Debug.Log("Winner!");
         LoadData.EndGame = true;
-        LoadData.WinGame = true;
+        LoadData.WinGame = true; 
+        Invoke("LoadEndGameUI", 1.5f);
 
         for (int x = 0; x < width; x++)
         {
@@ -337,21 +358,8 @@ public class Game : MonoBehaviour
             }
         }
     }
-
-    private Cell GetCell(int x, int y)
-    {
-        if (IsValid(x, y)) {
-            return state[x, y];
-        } else {
-            return new Cell();
-        }
-    }
-
-    private bool IsValid(int x, int y)
-    {
-        return x >= 0 && x < width && y >= 0 && y < height;
-    }
-
+    #endregion
+    #region controller button
     public void _btnPause()
     {
         popUpPasue.SetActive(true);
@@ -374,11 +382,16 @@ public class Game : MonoBehaviour
         LoadData.IsMute = !LoadData.IsMute;
         if (!LoadData.IsMute)
         {
-            imgBtnMute.sprite = imgOnMusic;
+            imgBtnMute.sprite = imgOnMusic; 
+            Debug.Log("Game - ismute: on");
+            audioSource.Play();
         }
         else
         {
+            Debug.Log("Game - ismute: off");
+            audioSource.Stop();
             imgBtnMute.sprite = imgOffMusic;
         }
     }
+    #endregion
 }
