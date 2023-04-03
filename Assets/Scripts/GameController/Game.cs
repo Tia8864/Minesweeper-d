@@ -261,7 +261,6 @@ public class Game : MonoBehaviour
 
         board.Draw(state);
     }
-
     private void Flood(Cell cell)
     {
         // Recursive exit conditions
@@ -289,7 +288,6 @@ public class Game : MonoBehaviour
             return new Cell();
         }
     }
-
     private bool IsValid(int x, int y)
     {
         return x >= 0 && x < width && y >= 0 && y < height;
